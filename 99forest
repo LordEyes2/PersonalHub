@@ -532,7 +532,7 @@ local AutoHitToggle = Automations:CreateToggle({
                   local toolInstance = nil
                   if player.Inventory then
                      for _, item in pairs(player.Inventory:GetChildren()) do
-                        if item:IsA("Model") and (string.find(string.lower(item.Name), "axe") or item.Name == "Morningstar" or item.Name == "Laser Sword" or item.Name == "Ice Sword" or item.Name == "Chainsaw" or item.Name == "Spear" or item.Name == "Infernal Sword") then
+                        if item:IsA("Model") and (string.find(string.lower(item.Name), "axe") or item.Name == "Morningstar" or item.Name == ["Laser Sword"] or item.Name == ["Ice Sword"] or item.Name == "Chainsaw" or item.Name == "Spear" or item.Name == ["Infernal Sword"]) then
                            toolInstance = item
                            break
                         end
