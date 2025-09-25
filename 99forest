@@ -1,6 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- loadstring(game:HttpGet('https://raw.githubusercontent.com/LordEyes2/PersonalHub/refs/heads/main/99forest'))()
+-- loadstring(game:HttpGet('https://raw.githubusercontent.com/LordEyes2/PersonalHub/refs/heads/main/99forest'))() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 
 -- RayField UI
 local Window = Rayfield:CreateWindow({
@@ -87,6 +87,7 @@ local ToolTypes = {}
 local ToolEsp = false
 local OtherTypes = {}
 local OtherEsp = false
+local ChestEsp = false
 
 --[[ UI ELEMENTS ]]--
 
@@ -1510,3 +1511,83 @@ local CheckOtherGrabs = Grabs:CreateButton({
 })
 
 local GrabsDivider6 = Grabs:CreateDivider()
+
+local ChestEspToggle = Grabs:CreateToggle({
+   Name = "Chest Esp",
+   CurrentValue = false,
+   Flag = "Toggleidk232",
+   Callback = function(Value)
+      ChestEsp = Value
+      if ChestEsp then
+         spawn(function()
+            local player = game:GetService("Players").LocalPlayer
+            local itemsFolder = workspace:WaitForChild("Items")
+            while ChestEsp do
+               if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                  local playerPos = player.Character.HumanoidRootPart.Position
+                  -- Update or create labels for chest items
+                  for _, item in pairs(itemsFolder:GetChildren()) do
+                     if item:IsA("Model") and item.Name:match("Chest%d*$") then
+                        local primary = item.PrimaryPart or item:FindFirstChildWhichIsA("BasePart")
+                        if primary then
+                           local distance = (playerPos - primary.Position).Magnitude
+                           local billboard = primary:FindFirstChild("ChestEspBillboard")
+                           if not billboard then
+                              billboard = Instance.new("BillboardGui")
+                              billboard.Name = "ChestEspBillboard"
+                              billboard.AlwaysOnTop = true
+                              billboard.Size = UDim2.new(4, 0, 1, 0)
+                              billboard.StudsOffset = Vector3.new(0, 3, 0)
+                              billboard.Parent = primary
+                              local textLabel = Instance.new("TextLabel")
+                              textLabel.Size = UDim2.new(1, 0, 1, 0)
+                              textLabel.BackgroundTransparency = 1
+                              textLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Gold color for chests
+                              textLabel.TextStrokeTransparency = 0
+                              textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                              textLabel.Font = Enum.Font.SourceSansBold
+                              textLabel.TextSize = 20
+                              textLabel.Text = item.Name .. "\n" .. string.format("[%.1f]", distance)
+                              textLabel.Parent = billboard
+                           else
+                              local textLabel = billboard:FindFirstChildWhichIsA("TextLabel")
+                              if textLabel then
+                                 textLabel.Text = item.Name .. "\n" .. string.format("[%.1f]", distance)
+                              end
+                           end
+                        end
+                     end
+                  end
+               end
+               task.wait(0.1) -- Update every 0.1 seconds
+            end
+            -- Clean up all labels when toggled off
+            for _, item in pairs(itemsFolder:GetChildren()) do
+               if item:IsA("Model") then
+                  local primary = item.PrimaryPart or item:FindFirstChildWhichIsA("BasePart")
+                  if primary then
+                     local billboard = primary:FindFirstChild("ChestEspBillboard")
+                     if billboard then
+                        billboard:Destroy()
+                     end
+                  end
+               end
+            end
+         end)
+      else
+         -- Immediate cleanup when toggled off
+         local itemsFolder = workspace:WaitForChild("Items")
+         for _, item in pairs(itemsFolder:GetChildren()) do
+            if item:IsA("Model") then
+               local primary = item.PrimaryPart or item:FindFirstChildWhichIsA("BasePart")
+               if primary then
+                  local billboard = primary:FindFirstChild("ChestEspBillboard")
+                  if billboard then
+                     billboard:Destroy()
+                  end
+               end
+            end
+         end
+      end
+   end,
+})
