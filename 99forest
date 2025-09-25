@@ -112,7 +112,7 @@ local TeleportLostChild1 = Teleports:CreateButton({
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
 	local root = char:WaitForChild("HumanoidRootPart")
-	local child = game.Workspace.Characters:FindFirstChild("Lost Child")
+	local child = game.Workspace.Characters:FindFirstChild("Lost Child"):FindFirstChild("HumanoidRootPart")
 	root.CFrame = child.CFrame + Vector3.new(0, 5, 0)
    end,
 })
@@ -123,7 +123,7 @@ local TeleportLostChild2 = Teleports:CreateButton({
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
 	local root = char:WaitForChild("HumanoidRootPart")
-	local child2 = game.Workspace.Characters:FindFirstChild("Lost Child2")
+	local child2 = game.Workspace.Characters:FindFirstChild("Lost Child2"):FindFirstChild("HumanoidRootPart")
 	root.CFrame = child2.CFrame + Vector3.new(0, 5, 0)
    end,
 })
@@ -134,7 +134,7 @@ local TeleportLostChild3 = Teleports:CreateButton({
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
 	local root = char:WaitForChild("HumanoidRootPart")
-	local child3 = game.Workspace.Characters:FindFirstChild("Lost Child3")
+	local child3 = game.Workspace.Characters:FindFirstChild("Lost Child3"):FindFirstChild("HumanoidRootPart")
 	root.CFrame = child3.CFrame + Vector3.new(0, 5, 0)
    end,
 })
@@ -145,7 +145,7 @@ local TeleportLostChild4 = Teleports:CreateButton({
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
 	local root = char:WaitForChild("HumanoidRootPart")
-	local child4 = game.Workspace.Characters:FindFirstChild("Lost Child4")
+	local child4 = game.Workspace.Characters:FindFirstChild("Lost Child4"):FindFirstChild("HumanoidRootPart")
 	root.CFrame = child4.CFrame + Vector3.new(0, 5, 0)
    end,
 })
