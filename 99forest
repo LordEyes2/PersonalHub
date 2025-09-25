@@ -1,6 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- loadstring(game:HttpGet('https://raw.githubusercontent.com/LordEyes2/PersonalHub/refs/heads/main/99forest'))() --
+-- loadstring(game:HttpGet('https://raw.githubusercontent.com/LordEyes2/PersonalHub/refs/heads/main/99forest'))() 
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 
 -- RayField UI
@@ -995,7 +995,7 @@ local FoodEspToggle = Grabs:CreateToggle({
 -- Food/Heal Types Dropdown
 local FoodDropdown = Grabs:CreateDropdown({
    Name = "Food/Heal Types",
-   Options = {"Carrot", "Mackerel", "Salmon", "Berry", "Ribs", "Cooked Ribs", "Morsel", "Steak", "Corn", "Cooked Morsel", "Cooked Steak", "Bandage", "Medkit", "Chilli", "Apple", "Cake"},
+   Options = {"Carrot", "Mackerel", "Salmon", "Berry", "Ribs", "Cooked Ribs", "Morsel", "Steak", "Corn", "Cooked Morsel", "Cooked Steak", "Bandage", "MedKit", "Chilli", "Apple", "Cake"},
    CurrentOption = {},
    MultipleOptions = true,
    Flag = "Dropdown3",
