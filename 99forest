@@ -5,7 +5,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/
 
 -- RayField UI
 local Window = Rayfield:CreateWindow({
-   Name = "Personal Hub V2.0",
+   Name = "Personal Hub",
    Icon = 0,
    LoadingTitle = "Loading...",
    LoadingSubtitle = "by Personal Hub",
@@ -496,7 +496,7 @@ local AutoHitToggle = Automations:CreateToggle({
                   local toolInstance = nil
                   if player.Inventory then
                      for _, item in pairs(player.Inventory:GetChildren()) do
-                        if item:IsA("Model") and (string.find(string.lower(item.Name), "axe") or item.Name == "Morningstar" or item.Name == "Laser Sword" or item.Name == "Ice Sword" or item.Name == "Chainsaw" or item.Name == "Spear") then
+                        if item:IsA("Model") and (string.find(string.lower(item.Name), "axe") or item.Name == "Morningstar" or item.Name == "Laser Sword" or item.Name == "Ice Sword" or item.Name == "Chainsaw" or item.Name == "Spear" or item.Name = "Infernal Sword") then
                            toolInstance = item
                            break
                         end
@@ -959,7 +959,7 @@ local FoodEspToggle = Grabs:CreateToggle({
 -- Food/Heal Types Dropdown
 local FoodDropdown = Grabs:CreateDropdown({
    Name = "Food/Heal Types",
-   Options = {"Carrot", "Mackerel", "Salmon", "Berry", "Ribs", "Morsel", "Steak", "Corn", "Cooked Morsel", "Cooked Steak", "Bandage", "Medkit", "Chilli", "Apple", "Cake"},
+   Options = {"Carrot", "Mackerel", "Salmon", "Berry", "Ribs", "Cooked Ribs", "Morsel", "Steak", "Corn", "Cooked Morsel", "Cooked Steak", "Bandage", "Medkit", "Chilli", "Apple", "Cake"},
    CurrentOption = {},
    MultipleOptions = true,
    Flag = "Dropdown3",
