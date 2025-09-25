@@ -1,6 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- loadstring(game:HttpGet('https://raw.githubusercontent.com/LordEyes2/PersonalHub/refs/heads/main/99forest'))() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+-- loadstring(game:HttpGet('https://raw.githubusercontent.com/LordEyes2/PersonalHub/refs/heads/main/99forest'))() 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 
 -- RayField UI
 local Window = Rayfield:CreateWindow({
@@ -91,14 +92,61 @@ local ChestEsp = false
 
 --[[ UI ELEMENTS ]]--
 
-local TeleportCamp = Teleports:CreateButton({
+local TeleportCamp = Teleports:CreateKeybind({
    Name = "Camp",
-   Callback = function()
+   CurrentKeybind = "Q",
+   HoldToInteract = false,
+   Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Keybind)
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
 	local root = char:WaitForChild("HumanoidRootPart")
 	local campfire = game.Workspace.Map.Campground:FindFirstChild("MainFire"):FindFirstChild("OuterTouchZone")
 	root.CFrame = campfire.CFrame + Vector3.new(0, 5, 0)
+   end,
+})
+
+local TeleportLostChild1 = Teleports:CreateButton({
+   Name = "Camp",
+   Callback = function()
+   local player = game:GetService("Players").LocalPlayer
+   local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	local child = game.Workspace.Characters:FindFirstChild("Lost Child")
+	root.CFrame = child.CFrame + Vector3.new(0, 5, 0)
+   end,
+})
+
+local TeleportLostChild2 = Teleports:CreateButton({
+   Name = "Camp",
+   Callback = function()
+   local player = game:GetService("Players").LocalPlayer
+   local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	local child2 = game.Workspace.Characters:FindFirstChild("Lost Child2")
+	root.CFrame = child2.CFrame + Vector3.new(0, 5, 0)
+   end,
+})
+
+local TeleportLostChild3 = Teleports:CreateButton({
+   Name = "Camp",
+   Callback = function()
+   local player = game:GetService("Players").LocalPlayer
+   local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	local child3 = game.Workspace.Characters:FindFirstChild("Lost Child3")
+	root.CFrame = child3.CFrame + Vector3.new(0, 5, 0)
+   end,
+})
+
+local TeleportLostChild4 = Teleports:CreateButton({
+   Name = "Camp",
+   Callback = function()
+   local player = game:GetService("Players").LocalPlayer
+   local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	local child4 = game.Workspace.Characters:FindFirstChild("Lost Child4")
+	root.CFrame = child4.CFrame + Vector3.new(0, 5, 0)
    end,
 })
 
