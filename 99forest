@@ -133,8 +133,8 @@ local TeleportLostChild2 = Teleports:CreateButton({
       local char = player.Character or player.CharacterAdded:Wait()
       local root = char:WaitForChild("HumanoidRootPart")
       local child2 = game.Workspace.Characters:FindFirstChild("Lost Child2")
-      if child and child:FindFirstChild("HumanoidRootPart") then
-         root.CFrame = child.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
+      if child2 and child:FindFirstChild("HumanoidRootPart") then
+         root.CFrame = child2.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
       else
          Rayfield:Notify({
             Title = "Error",
@@ -153,8 +153,8 @@ local TeleportLostChild3 = Teleports:CreateButton({
       local char = player.Character or player.CharacterAdded:Wait()
       local root = char:WaitForChild("HumanoidRootPart")
       local child3 = game.Workspace.Characters:FindFirstChild("Lost Child3")
-      if child and child:FindFirstChild("HumanoidRootPart") then
-         root.CFrame = child.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
+      if child3 and child:FindFirstChild("HumanoidRootPart") then
+         root.CFrame = child3.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
       else
          Rayfield:Notify({
             Title = "Error",
@@ -173,8 +173,8 @@ local TeleportLostChild4 = Teleports:CreateButton({
       local char = player.Character or player.CharacterAdded:Wait()
       local root = char:WaitForChild("HumanoidRootPart")
       local child4 = game.Workspace.Characters:FindFirstChild("Lost Child4")
-      if child and child:FindFirstChild("HumanoidRootPart") then
-         root.CFrame = child.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
+      if child4 and child:FindFirstChild("HumanoidRootPart") then
+         root.CFrame = child4.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
       else
          Rayfield:Notify({
             Title = "Error",
