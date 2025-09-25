@@ -107,7 +107,7 @@ local TeleportCamp = Teleports:CreateKeybind({
 })
 
 local TeleportLostChild1 = Teleports:CreateButton({
-   Name = "Camp",
+   Name = "Child One",
    Callback = function()
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
@@ -118,7 +118,7 @@ local TeleportLostChild1 = Teleports:CreateButton({
 })
 
 local TeleportLostChild2 = Teleports:CreateButton({
-   Name = "Camp",
+   Name = "Child Two",
    Callback = function()
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
@@ -129,7 +129,7 @@ local TeleportLostChild2 = Teleports:CreateButton({
 })
 
 local TeleportLostChild3 = Teleports:CreateButton({
-   Name = "Camp",
+   Name = "Child Three",
    Callback = function()
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
@@ -140,7 +140,7 @@ local TeleportLostChild3 = Teleports:CreateButton({
 })
 
 local TeleportLostChild4 = Teleports:CreateButton({
-   Name = "Camp",
+   Name = "Child Four",
    Callback = function()
    local player = game:GetService("Players").LocalPlayer
    local char = player.Character or player.CharacterAdded:Wait()
