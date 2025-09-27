@@ -690,7 +690,7 @@ local AutoMineOreToggle = Automations:CreateToggle({
                      -- Check Landmarks descendants
                      for _, obj in pairs(landmarks:GetDescendants()) do
                         if table.find(OreType, obj.Name) and obj:IsA("Model") then
-                           local orePart = obj:FindFirstChild("Ore")
+                           local orePart = obj:FindFirstChild("Main")
                            if orePart and orePart:IsA("BasePart") then
                               local orePos = orePart.Position
                               local distance = (playerPos - orePos).Magnitude
@@ -707,7 +707,7 @@ local AutoMineOreToggle = Automations:CreateToggle({
                            activeTasks[taskKey] = task.spawn(function()
                               local ore = oreData.Object
                               local oreCFrame = oreData.CFrame
-                              local orePart = ore:FindFirstChild("Ore")
+                              local orePart = ore:FindFirstChild("Main")
                               -- Get or create HitRegisters for the ore
                               local hitRegisters = ore:FindFirstChild("HitRegisters")
                               if not hitRegisters then
@@ -781,7 +781,7 @@ local AutoMineOreToggle = Automations:CreateToggle({
                      -- Clean up labels for ores not updated in 10 seconds
                      for ore, lastUpdateTime in pairs(oresLastUpdate) do
                         if os.time() - lastUpdateTime > 10 then
-                           local orePart = ore:FindFirstChild("Ore")
+                           local orePart = ore:FindFirstChild("Main")
                            if orePart then
                               local billboard = orePart:FindFirstChild("HealthBillboard")
                               if billboard then
@@ -825,7 +825,7 @@ local AutoMineOreToggle = Automations:CreateToggle({
             local landmarks = map:WaitForChild("Landmarks")
             for _, ore in pairs(landmarks:GetDescendants()) do
                if ore:IsA("Model") then
-                  local orePart = ore:FindFirstChild("Ore")
+                  local orePart = ore:FindFirstChild("Main")
                   if orePart then
                      local billboard = orePart:FindFirstChild("HealthBillboard")
                      if billboard then
@@ -835,7 +835,7 @@ local AutoMineOreToggle = Automations:CreateToggle({
                end
             end
             for ore, _ in pairs(oresLastUpdate) do
-               local orePart = ore:FindFirstChild("Ore")
+               local orePart = ore:FindFirstChild("Main")
                if orePart then
                   local billboard = orePart:FindFirstChild("HealthBillboard")
                   if billboard then
@@ -881,7 +881,7 @@ local ClearBillboardOre = Automations:CreateButton({
             local landmarks = map:WaitForChild("Landmarks")
             for _, ore in pairs(landmarks:GetDescendants()) do
                if ore:IsA("Model") then
-                  local orePart = ore:FindFirstChild("Ore")
+                  local orePart = ore:FindFirstChild("Main")
                   if orePart then
                      local billboard = orePart:FindFirstChild("HealthBillboard")
                      if billboard then
