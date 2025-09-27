@@ -69,6 +69,7 @@ sundial()
 
 --[[ VARIABLES ]]--
 local AutoTree = false
+local AutoMineOre = false
 local AutoHit = false
 local GrabFuel = false
 local GrabGears = false
@@ -76,7 +77,9 @@ local GrabTools = false
 local GrabOthers = false
 local GrabFood = false
 local HitRange = 10
+local HitRangeOre = 10
 local Range = 10
+local OreType = {}
 local TreeType = {}
 local FuelTypes = {}
 local FuelEsp = false
@@ -639,7 +642,257 @@ local RangeSlider2 = Automations:CreateSlider({
 })
 
 local AutomationsDivider2 = Automations:CreateDivider()
-
+-- Auto Mine Ores
+local AutoMineOreToggle = Automations:CreateToggle({
+   Name = "Auto Mine Ores",
+   CurrentValue = false,
+   Flag = "ToggleOre",
+   Callback = function(Value)
+      AutoMineOre = Value
+      if AutoMineOre then
+         Rayfield:Notify({
+            Title = "Warning!",
+            Content = "Please equip an axe to use!",
+            Duration = 6.5,
+            Image = "triangle-alert",
+         })
+         -- Start auto-mining loop
+         spawn(function()
+            local player = game:GetService("Players").LocalPlayer
+            local replicatedStorage = game:GetService("ReplicatedStorage")
+            local oresLastUpdate = {} -- Track last Health update time for each ore
+            local activeTasks = {} -- Track active tasks for cancellation
+            local taskLock = false -- Prevent tasks during cleanup
+            while AutoMineOre do
+               if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("ToolHandle") then
+                  local playerPos = player.Character.HumanoidRootPart.Position
+                  local playerCFrame = player.Character.HumanoidRootPart.CFrame
+                  -- Find an axe in Inventory (Model with "Axe" in its name)
+                  local toolInstance = nil
+                  local weaponDamage = 1
+                  if player:FindFirstChild("Inventory") then
+                     for _, item in pairs(player.Inventory:GetChildren()) do
+                        if item:IsA("Model") and string.find(string.lower(item.Name), "axe") then
+                           toolInstance = item
+                           local damageAttr = item:GetAttribute("WeaponResourceDamage")
+                           if damageAttr then
+                              weaponDamage = damageAttr
+                           end
+                           break
+                        end
+                     end
+                  end
+                  if toolInstance then
+                     -- Find ores in Landmarks descendants within range
+                     local map = workspace:WaitForChild("Map")
+                     local landmarks = map:WaitForChild("Landmarks")
+                     local oresInRange = {}
+                     -- Check Landmarks descendants
+                     for _, obj in pairs(landmarks:GetDescendants()) do
+                        if table.find(OreType, obj.Name) and obj:IsA("Model") then
+                           local orePart = obj:FindFirstChild("Ore")
+                           if orePart and orePart:IsA("BasePart") then
+                              local orePos = orePart.Position
+                              local distance = (playerPos - orePos).Magnitude
+                              if distance <= HitRangeOre then
+                                 table.insert(oresInRange, {Object = obj, Position = orePos, CFrame = orePart.CFrame})
+                              end
+                           end
+                        end
+                     end
+                     -- Spawn a task for each ore to hit independently
+                     if #oresInRange > 0 and not taskLock then
+                        for _, oreData in ipairs(oresInRange) do
+                           local taskKey = tostring(oreData.Object)
+                           activeTasks[taskKey] = task.spawn(function()
+                              local ore = oreData.Object
+                              local oreCFrame = oreData.CFrame
+                              local orePart = ore:FindFirstChild("Ore")
+                              -- Get or create HitRegisters for the ore
+                              local hitRegisters = ore:FindFirstChild("HitRegisters")
+                              if not hitRegisters then
+                                 hitRegisters = Instance.new("Folder")
+                                 hitRegisters.Name = "HitRegisters"
+                                 hitRegisters.Parent = ore
+                              end
+                              -- Get hit count from HitRegisters
+                              local hitCount = 0
+                              for attrName, _ in pairs(hitRegisters:GetAttributes()) do
+                                 local count = tonumber(string.match(attrName, "^(%d+)_%d+$") or 0)
+                                 if count and count > hitCount then
+                                    hitCount = count
+                                 end
+                              end
+                              hitCount = hitCount + 1
+                              local timestamp = tostring(os.time())
+                              local hitId = tostring(hitCount) .. "_" .. timestamp
+                              -- Set the hit attribute
+                              hitRegisters:SetAttribute(hitId, true)
+                              -- Prepare arguments for the remote event
+                              local args = {
+                                 ore,
+                                 toolInstance,
+                                 hitId,
+                                 playerCFrame
+                              }
+                              -- Invoke the remote event
+                              local success, err = pcall(function()
+                                 replicatedStorage:WaitForChild("RemoteEvents"):WaitForChild("ToolDamageObject"):InvokeServer(unpack(args))
+                              end)
+                              if not success then
+                                 hitRegisters:SetAttribute(hitId, nil)
+                              else
+                                 -- Add or update TextLabel with Health
+                                 if orePart then
+                                    local health = ore:GetAttribute("Health") or 0
+                                    local billboard = orePart:FindFirstChild("HealthBillboard")
+                                    if not billboard then
+                                       billboard = Instance.new("BillboardGui")
+                                       billboard.Name = "HealthBillboard"
+                                       billboard.AlwaysOnTop = true
+                                       billboard.Size = UDim2.new(4, 0, 1, 0)
+                                       billboard.StudsOffset = Vector3.new(0, 3, 0)
+                                       billboard.Parent = orePart
+                                       local textLabel = Instance.new("TextLabel")
+                                       textLabel.Size = UDim2.new(1, 0, 1, 0)
+                                       textLabel.BackgroundTransparency = 1
+                                       textLabel.TextColor3 = Color3.new(1, 1, 1)
+                                       textLabel.TextStrokeTransparency = 0
+                                       textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                                       textLabel.Font = Enum.Font.SourceSansBold
+                                       textLabel.TextSize = 20
+                                       textLabel.Text = "HP: " .. tostring(health)
+                                       textLabel.Parent = billboard
+                                    else
+                                       local textLabel = billboard:FindFirstChildWhichIsA("TextLabel")
+                                       if textLabel then
+                                          textLabel.Text = "HP: " .. tostring(health)
+                                       end
+                                    end
+                                    -- Track last update time
+                                    oresLastUpdate[ore] = os.time()
+                                 end
+                              end
+                              -- Delay to prevent spamming the server
+                              task.wait(0.01)
+                           end)
+                        end
+                     end
+                     -- Clean up labels for ores not updated in 10 seconds
+                     for ore, lastUpdateTime in pairs(oresLastUpdate) do
+                        if os.time() - lastUpdateTime > 10 then
+                           local orePart = ore:FindFirstChild("Ore")
+                           if orePart then
+                              local billboard = orePart:FindFirstChild("HealthBillboard")
+                              if billboard then
+                                 billboard:Destroy()
+                              end
+                           end
+                           oresLastUpdate[ore] = nil
+                        end
+                     end
+                     -- Clear active tasks for the next loop
+                     activeTasks = {}
+                     -- Small delay to prevent excessive server calls
+                     wait(0.01)
+                  else
+                     -- Notify if no axe is found in Inventory
+                     Rayfield:Notify({
+                        Title = "Error!",
+                        Content = "No axe found in Inventory! Please equip an axe.",
+                        Duration = 3,
+                        Image = "circle-x",
+                     })
+                     AutoMineOre = false
+                     break
+                  end
+               else
+                  -- Notify if ToolHandle or character is missing
+                  Rayfield:Notify({
+                     Title = "Error!",
+                     Content = "ToolHandle not found or character not loaded!",
+                     Duration = 3,
+                     Image = "circle-x",
+                  })
+                  AutoMineOre = false
+                  break
+               end
+            end
+            -- Set taskLock to prevent new tasks during cleanup
+            taskLock = true
+            -- Clean up all labels and cancel tasks when toggle is turned off
+            local map = workspace:WaitForChild("Map")
+            local landmarks = map:WaitForChild("Landmarks")
+            for _, ore in pairs(landmarks:GetDescendants()) do
+               if ore:IsA("Model") then
+                  local orePart = ore:FindFirstChild("Ore")
+                  if orePart then
+                     local billboard = orePart:FindFirstChild("HealthBillboard")
+                     if billboard then
+                        billboard:Destroy()
+                     end
+                  end
+               end
+            end
+            for ore, _ in pairs(oresLastUpdate) do
+               local orePart = ore:FindFirstChild("Ore")
+               if orePart then
+                  local billboard = orePart:FindFirstChild("HealthBillboard")
+                  if billboard then
+                     billboard:Destroy()
+                  end
+               end
+            end
+            for taskKey, taskRef in pairs(activeTasks) do
+               task.cancel(taskRef)
+            end
+            oresLastUpdate = {}
+            activeTasks = {}
+            taskLock = false
+         end)
+      end
+   end,
+})
+local RangeSliderOre = Automations:CreateSlider({
+   Name = "Mine Range",
+   Range = {0, 500},
+   Increment = 10,
+   Suffix = "Studs",
+   CurrentValue = 10,
+   Flag = "SliderOre",
+   Callback = function(Value)
+      HitRangeOre = Value
+   end,
+})
+local OreDropdown = Automations:CreateDropdown({
+   Name = "Ore Type",
+   Options = {"Meteor Node", "Obsidiron Node"},
+   CurrentOption = {},
+   MultipleOptions = true,
+   Flag = "DropdownOre",
+   Callback = function(Options)
+      OreType = Options
+   end,
+})
+local ClearBillboardOre = Automations:CreateButton({
+   Name = "Clear Ore Text",
+   Callback = function()
+            local map = workspace:WaitForChild("Map")
+            local landmarks = map:WaitForChild("Landmarks")
+            for _, ore in pairs(landmarks:GetDescendants()) do
+               if ore:IsA("Model") then
+                  local orePart = ore:FindFirstChild("Ore")
+                  if orePart then
+                     local billboard = orePart:FindFirstChild("HealthBillboard")
+                     if billboard then
+                        billboard:Destroy()
+                     end
+                  end
+               end
+            end
+   end,
+})
+local AutomationsDivider3 = Automations:CreateDivider()
 -- Grab Fuels
 local GrabFuelToggle = Grabs:CreateToggle({
    Name = "Grab Fuels",
@@ -797,7 +1050,7 @@ local FuelEspToggle = Grabs:CreateToggle({
 -- Fuel Types Dropdown
 local FuelDropdown = Grabs:CreateDropdown({
    Name = "Fuel Types",
-   Options = {"Cultist", "Sapling", "Feather", "Alien", "Log", "Chair", "Coal", "Fuel Canister", "Oil Barrel", "Biofuel"},
+   Options = {"Cultist", "Crossbow Cultist", "Sapling", "Feather", "Alien", "Log", "Chair", "Coal", "Fuel Canister", "Oil Barrel", "Biofuel"},
    CurrentOption = {},
    MultipleOptions = true,
    Flag = "Dropdown2",
